@@ -38,9 +38,7 @@ class findMyiPhone:
             }
         rsp=self.request(findMyiPhone.loginURL, loginParams, loginData)
         userInfo=json.loads(rsp.read())
-        print userInfo
         dsid=userInfo['dsInfo']['dsid']
-        print dsid
         self.dsid=dsid
         self.loggedIn=True
 

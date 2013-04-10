@@ -1,14 +1,17 @@
 #!/usr/bin/python
 
-import sys
+import sys,os
+import cgi, cgitb
 from findmyiphone import findMyiPhone
 
-username=sys.argv[1]
-password=sys.argv[2]
+credentials=cgi.FieldStorage()
+username=credentials.getvalue('u')
+password=credentials.getvalue('p')
+
 fmi=findMyiPhone(username, password)
-
 fmi.login()
-
 result=fmi.getLocation()
 
+print "Content-type: application/json"
+print
 print result
