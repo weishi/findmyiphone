@@ -5,6 +5,7 @@ run:
 
 deploy:
 	cp *.py ~/cgi-bin/
+	cp -r www ~/cgi-bin/
 
 clean:
 	-rm *.pyc

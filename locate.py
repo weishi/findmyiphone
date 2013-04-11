@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 import sys,os
-import cgi, cgitb
+import cgi, cgitb, json
 from findmyiphone import findMyiPhone
 
 credentials=cgi.FieldStorage()
@@ -14,4 +14,4 @@ result=fmi.getLocation()
 
 print "Content-type: application/json"
 print
-print result
+print json.dumps(result)

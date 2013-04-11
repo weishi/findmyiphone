@@ -8,7 +8,7 @@ class findMyiPhone:
     loginURL='https://setup.icloud.com/setup/ws/1/login?'
     serviceURL='https://p02-fmipweb.icloud.com/fmipservice/client/web/refreshClient?'
     uid='A24703893FAF930269AA864AFEB91445F6EF0C02'
-    clientId='F1195CA9-D5CD-4177-B306-FC84C61522C2'
+    clientId='5834333E-A2FE-4D75-A5F0-DB6EBF3DBC7A'
     headers=[
             ('user-agent', 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3'),
             ('accept', '*/*'),
