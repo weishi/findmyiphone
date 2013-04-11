@@ -6,19 +6,23 @@ import json
 class findMyiPhone:
     
     loginURL='https://setup.icloud.com/setup/ws/1/login?'
-    serviceURL='https://p02-fmipweb.icloud.com/fmipservice/client/web/refreshClient?'
-    uid='A24703893FAF930269AA864AFEB91445F6EF0C02'
+    serviceURL='https://p10-fmipweb.icloud.com/fmipservice/client/web/refreshClient?'
+    uid='038BC12FCB69916F0D95D3FECD61E449AC0E1092'
     clientId='5834333E-A2FE-4D75-A5F0-DB6EBF3DBC7A'
     headers=[
+            ('Accept-Charset', 'ISO-8859-1,utf-8;q=0.7,*;q=0.3'),
+            #('Accept-Encoding', 'gzip,deflate,sdch'),
+            ('Accept-Language', 'en-US,en;q=0.8'),
             ('user-agent', 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.2.3) Gecko/20100423 Ubuntu/10.04 (lucid) Firefox/3.6.3'),
             ('accept', '*/*'),
             ('Connection', 'keep-alive'),
+            ('Content-Type', 'text/plain'),
             ('Origin','https://www.icloud.com'),
             ('Referer','https://www.icloud.com')]
 
     def __init__(self, _username, _password):
         br=mechanize.Browser()
-        #br.set_proxies(proxies={'https': '192.168.1.5:8888'},proxy_bypass=lambda hostname: False)
+        br.set_proxies(proxies={'https': '192.168.1.5:8888'},proxy_bypass=lambda hostname: False)
         br.addheaders = findMyiPhone.headers
         self.br=br
         self.username=_username
