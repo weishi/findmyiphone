@@ -1,32 +1,54 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<style type="text/css">
-    body, html,#mapview{
-        width: 100%;
-        height: 400px;
-        margin:0;
-        display: block;
-    }
-</style>
-<script type="text/javascript" src="http://api.map.baidu.com/api?v=1.4"></script>
-<script type="text/javascript" src="javascript/jquery-1.9.1.js"></script>
-<script type="text/javascript" src="javascript/convertor.js"></script>
-<script type="text/javascript" src="javascript/map.js"></script>
-<title>Find my iPhone</title>
-</head>
-<body>
-    <div id="mapview"></div>
-    <div id="info">
-        <span id="login">Logging in...</span>
-        <a href="options.html">Settings</a>
-        <img id="refresh" src="images/loading.gif"/>
-        <span id="position">
-            <span id="long"></span>
-            <span id="lat"></span>
-        </span>
-        <span id="warning"></span>
-    </div>
-</body>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=320.1 user-scalable=no, initial-scale=1.0, maximum-scale=1.0"/>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-title" content="Find iPhone">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+        <link rel="apple-touch-icon" href="images/favicon.jpg"/>
+        <link rel="stylesheet" href="css/map.css" type="text/css" media="screen, mobile" title="main" charset="utf-8">
+        <script type="text/javascript" src="http://api.map.baidu.com/api?v=1.4"></script>
+        <script type="text/javascript" src="javascript/jquery-1.9.1.js"></script>
+        <script type="text/javascript" src="javascript/convertor.js"></script>
+        <script type="text/javascript" src="javascript/svg.js"></script>
+        <script type="text/javascript" src="javascript/map.js"></script>
+        <title>Find my iPhone</title>
+    </head>
+    <body>
+        <div id="mapview"></div>
+        <div id="footer">
+            <div class="left bar">
+                <div id="refreshBtn">
+                    <img class="svg" src="images/compass.svg"/>
+                </div>
+            </div>
+            <div class="right bar">
+                <div id="settingsBtn">
+                    <img class="svg" src="images/cog.svg"/>
+                </div>
+            </div>
+            <div class="middle bar">
+                <span id="info">Logging in...</span>
+            </div>
+        </div>
+        <div id="settings">
+            <label>
+                <span>Username</span>
+                <input type="email" class="input_text" id="username"/>
+            </label>
+            <label>
+                <span>Password</span>
+                <input type="password" class="input_text" id="password"/>
+            </label>
+            <label>
+                <input type="button" id="save" value="Save"/>
+            </label>
+        </div>
+
+        <form id="position">
+            <input id="long" type="hidden" value=""/>
+            <input id="lat" type="hidden" value=""/>
+        </form>
+    </body>
 </html>

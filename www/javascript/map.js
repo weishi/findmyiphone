@@ -31,7 +31,7 @@ var view={
 
     init: function(){
         var bm = new BMap.Map("mapview");
-        bm.centerAndZoom(new BMap.Point(view.defaultLong, view.defaultLat), 15);
+        bm.centerAndZoom(new BMap.Point(view.defaultLong, view.defaultLat), 17);
         bm.addControl(new BMap.NavigationControl());
         view.bm=bm;
     },
@@ -49,7 +49,6 @@ var view={
         var label = new BMap.Label("test1",{offset:new BMap.Size(20,-10)});
         marker.setLabel(label); 
         view.bm.setCenter(point);
-        alert(point.lng + "," + point.lat);
     },
 };
 
@@ -60,29 +59,51 @@ function updateLocation(){
             localStorage["username"],
             localStorage["password"],
             function(data){
-                $('#login').hide();
+                $('#info').html("Done");
                 for(var i=0;i<data.length;i++){
                     var device=data[i];
                     console.log(device['name']);
-                    if(device['name']=='weishi_iPhone5'){
-                        $('#long').html(device['location']['longitude']);
-                        $('#lat').html(device['location']['latitude']);
-                    }
+                    $('#long').val(device['location']['longitude']);
+                    $('#lat').val(device['location']['latitude']);
                 }
-                view.render(parseFloat($('#long').html()), 
-                            parseFloat($('#lat').html())
+                view.render(parseFloat($('#long').val()), 
+                            parseFloat($('#lat').val())
                             );
                 //view.render(122,30);
             },
             function(xhr, status){
-                $('#warning').html(status);
+                $('#info').html(status);
             }
         );
     }
 };
 
+var settings={
+    load: function(){
+        $('#username').val(localStorage["username"]);
+        $('#password').val(localStorage["password"]);
+    },
+
+    save: function(){
+        localStorage["username"]=$('#username').val();
+        localStorage["password"]=$('#password').val();
+        $('#settings').hide();
+    }
+};
 
 document.addEventListener('DOMContentLoaded', function () {
-    $('#refresh').click(updateLocation);
+    initSVG();
+    /* Bind buttons */
+    $('#settings').hide();
+    $('#settingsBtn').click(function(){
+        settings.load();
+        $('#settings').show();
+        $('html, body').animate({scrollTop: $(document).height()-$(window).height()}, 
+                  500,"swing");
+    });
+    $('#save').click(settings.save);
+    $('#refreshBtn').click(updateLocation);
+
+    /* Auto update on page load */
     updateLocation();
 });

@@ -1,4 +1,4 @@
-all: run
+all: deploy
 
 run:
 	locate.py

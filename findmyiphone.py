@@ -22,7 +22,7 @@ class findMyiPhone:
 
     def __init__(self, _username, _password):
         br=mechanize.Browser()
-        br.set_proxies(proxies={'https': '192.168.1.5:8888'},proxy_bypass=lambda hostname: False)
+        #br.set_proxies(proxies={'https': '192.168.1.5:8888'},proxy_bypass=lambda hostname: False)
         br.addheaders = findMyiPhone.headers
         self.br=br
         self.username=_username
