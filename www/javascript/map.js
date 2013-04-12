@@ -23,16 +23,16 @@ var locationSource={
 };
 
 var view={
-    curLong: 121.474028,
-    curLat: 31.229977,
+    curLong: 121.480028,
+    curLat: 31.236977,
     bm: '',
 
     init: function(){
         var bm = new BMap.Map("mapview");
         var traffic = new BMap.TrafficLayer();
         bm.centerAndZoom(new BMap.Point(view.curLong, view.curLat), 17);
-        bm.addControl(new BMap.MapTypeControl());
-        bm.addTileLayer(traffic);
+        //bm.addControl(new BMap.MapTypeControl());
+        //bm.addTileLayer(traffic);
         view.bm=bm;
     },
     
@@ -73,12 +73,12 @@ var view={
 };
 
 function updateLocation(){
+    $('#refreshBtn').addClass('loading');
     if(typeof localStorage["username"] !== 'undefined'){
         locationSource.get(
             localStorage["username"],
             localStorage["password"],
             function(data){
-                $('#info').html("Done");
                 for(var i=0;i<data.length;i++){
                     var device=data[i];
                     console.log(device['name']);
@@ -88,6 +88,8 @@ function updateLocation(){
                                 device['location']['timeStamp']);
                 }
                 view.render();
+                $('#info').html(moment(view.lastUpdate).format('MM/D/YYYY HH:mm:ss'));
+                $('#refreshBtn').removeClass('loading');
             },
             function(xhr, status){
                 $('#info').html(status);
