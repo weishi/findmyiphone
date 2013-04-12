@@ -11,12 +11,10 @@ var locationSource={
                 p: password,
             },
             success: function(data){
-                console.log('good');
                 console.log(data);
                 success(data);
             },
             error: function(xhr, status){
-                console.log('bad');
                 console.log(status);
                 failure(status);
             }
@@ -25,35 +23,56 @@ var locationSource={
 };
 
 var view={
-    defaultLong: 116,
-    defaultLat: 39,
+    curLong: 121.474028,
+    curLat: 31.229977,
     bm: '',
 
     init: function(){
         var bm = new BMap.Map("mapview");
-        bm.centerAndZoom(new BMap.Point(view.defaultLong, view.defaultLat), 17);
-        bm.addControl(new BMap.NavigationControl());
+        var traffic = new BMap.TrafficLayer();
+        bm.centerAndZoom(new BMap.Point(view.curLong, view.curLat), 17);
+        bm.addControl(new BMap.MapTypeControl());
+        bm.addTileLayer(traffic);
         view.bm=bm;
     },
+    
+    update: function(longitude, latitude, acc, timestamp){
+        view.curLong=longitude;
+        view.curLat=latitude;
+        view.curAccuracy=acc;
+        view.lastUpdate=timestamp;
+    },
 
-    render: function(longitude, latitude){
-        var point = new BMap.Point(longitude, latitude);
-        console.log(longitude);
-        console.log(latitude);
+    render: function(){
+        var point = new BMap.Point(view.curLong, view.curLat);
         BMap.Convertor.translate(point,0,view.translate); 
     },
     
     translate: function (point){
+        view.bm.setCenter(point);
         var marker = new BMap.Marker(point);
         view.bm.addOverlay(marker);
-        var label = new BMap.Label("test1",{offset:new BMap.Size(20,-10)});
-        marker.setLabel(label); 
-        view.bm.setCenter(point);
+        
+        /* Add info */
+        var fromNow=moment(view.lastUpdate).fromNow();
+        var label = new BMap.Label(fromNow,{offset:new BMap.Size(20,-10)});
+        label.setStyle({fontSize: '16px', borderRaduis:'5px'});
+        marker.setLabel(label);
+        marker.addEventListener('click',function(){
+            /* Update info */
+            this.getLabel().setContent(moment(view.lastUpdate).fromNow());
+        });
+        /* Add radius */
+        var circle= new BMap.Circle(point,view.curAccuracy);
+        circle.setFillColor('#0033cc');
+        circle.setFillOpacity(0.3);
+        circle.setStrokeWeight(1);
+        view.bm.addOverlay(circle);
+
     },
 };
 
 function updateLocation(){
-    view.init();
     if(typeof localStorage["username"] !== 'undefined'){
         locationSource.get(
             localStorage["username"],
@@ -63,13 +82,12 @@ function updateLocation(){
                 for(var i=0;i<data.length;i++){
                     var device=data[i];
                     console.log(device['name']);
-                    $('#long').val(device['location']['longitude']);
-                    $('#lat').val(device['location']['latitude']);
+                    view.update(device['location']['longitude'],
+                                device['location']['latitude'],
+                                device['location']['horizontalAccuracy'],
+                                device['location']['timeStamp']);
                 }
-                view.render(parseFloat($('#long').val()), 
-                            parseFloat($('#lat').val())
-                            );
-                //view.render(122,30);
+                view.render();
             },
             function(xhr, status){
                 $('#info').html(status);
@@ -104,6 +122,5 @@ document.addEventListener('DOMContentLoaded', function () {
     $('#save').click(settings.save);
     $('#refreshBtn').click(updateLocation);
 
-    /* Auto update on page load */
-    updateLocation();
+    view.init();
 });
