@@ -7,49 +7,102 @@
         <meta name="apple-mobile-web-app-title" content="Find iPhone">
         <meta name="apple-mobile-web-app-status-bar-style" content="black" />
         <link rel="apple-touch-icon" href="images/favicon.jpg"/>
-        <link rel="stylesheet" href="css/map.css" type="text/css" media="screen, mobile" title="main" charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="http://code.jquery.com/mobile/1.3.1/jquery.mobile-1.3.1.css" />
+        <link rel="stylesheet" type="text/css" href="css/map.css" media="screen, mobile" title="main" charset="utf-8" />
+        <link rel="stylesheet/less" type="text/css" href="css/panel.less" />
+
         <script type="text/javascript" src="http://api.map.baidu.com/api?v=1.5&ak=807a3f69b80062c473f2ccf0864cc368"></script>
         <script type="text/javascript" src="javascript/jquery-1.9.1.js"></script>
+        <script type="text/javascript" src="javascript/jquery.mobile-1.3.1.js"></script>
         <script type="text/javascript" src="javascript/moment.min.js"></script>
         <script type="text/javascript" src="javascript/convertor.js"></script>
         <script type="text/javascript" src="javascript/svg.js"></script>
         <script type="text/javascript" src="javascript/map.js"></script>
+        <script type="text/javascript" src="javascript/less-1.3.3.min.js"></script>
+
         <title>Find my iPhone</title>
     </head>
     <body>
-        <div id="mapview"></div>
-        <div id="footer">
-            <div class="left bar">
-                <div id="refreshBtn">
-                    <img class="svg" src="images/compass.svg"/>
-                </div>
-            </div>
-            <div class="right bar">
-                <div id="settingsBtn">
-                    <img class="svg" src="images/cog.svg"/>
-                </div>
-            </div>
-            <div class="middle bar">
-                <span id="info">Find my iPhone</span>
-            </div>
-        </div>
-        <div id="settings">
-            <label>
-                <span>Username</span>
-                <input type="email" class="input_text" id="username"/>
-            </label>
-            <label>
-                <span>Password</span>
-                <input type="password" class="input_text" id="password"/>
-            </label>
-            <label>
-                <input type="button" id="save" value="Save"/>
-            </label>
-        </div>
+        <div data-role="page" id="mapPage">
+            <div data-role="panel" id="myPanel">
+                <ul data-role="listview">
+                    <li><a href="#mapPage">Map</a></li>
+                    <li><a href="#settingsPage">Settings</a></li>
+                    <li><a href="#infoPage">Info</a></li>
+                </ul>
+            </div><!-- /panel -->
 
-        <form id="position">
-            <input id="long" type="hidden" value=""/>
-            <input id="lat" type="hidden" value=""/>
-        </form>
+            <div data-role="header" data-theme="b" >
+                <a href="#myPanel" data-role="button" data-icon="bars" data-iconpos="notext" data-theme="b" data-inline="true">Bars</a>
+                <h1>Find my iPhone</h1>
+            </div><!-- header -->
+
+            <div data-role="content" data-theme="b" >
+                <div id="mapview"></div>
+            </div><!-- content -->
+
+            <div data-role="footer" data-theme="b">
+                <div class="center-wrapper">
+                    <a id="refreshBtn" data-role="button" data-icon="refresh" data-theme="b" data-inline="true">Locate</a>
+                </div>
+            </div><!-- footer -->
+        </div><!-- page -->
+
+        <!-- ======================== Settings Page ===================== -->
+        <div data-role="page" id="settingsPage" >
+            <div data-role="panel" id="myPanel">
+                <ul data-role="listview">
+                    <li><a href="#mapPage">Map</a></li>
+                    <li><a href="#settingsPage">Settings</a></li>
+                    <li><a href="#infoPage">Info</a></li>
+                </ul>
+            </div><!-- /panel -->
+
+            <div data-role="header" data-theme="b" >
+                <a href="#myPanel" data-role="button" data-icon="bars" data-iconpos="notext" data-theme="b" data-inline="true">Bars</a>
+                <h1>Find my iPhone</h1>
+            </div><!-- header -->
+
+            <div data-role="content" data-theme="b" >
+                <div id="settings">
+                    <label for="text-basic">Username:</label>
+                    <input type="email"    id="username" value="">
+                    <label for="text-basic">Password:</label>
+                    <input type="password" id="password" value="">
+                    <input type="button" id="save" value="Save" data-icon="check" data-theme="b" />
+                </div>
+
+                <form id="position">
+                    <input id="long" type="hidden" value=""/>
+                    <input id="lat" type="hidden" value=""/>
+                </form>
+            </div><!-- content -->
+        </div><!-- page -->
+
+        <!-- ====================== Info Page ===================== -->
+        <div data-role="page" id="infoPage" >
+            <div data-role="panel" id="myPanel">
+                <ul data-role="listview">
+                    <li><a href="#mapPage">Map</a></li>
+                    <li><a href="#settingsPage">Settings</a></li>
+                    <li><a href="#infoPage">Info</a></li>
+                </ul>
+            </div><!-- /panel -->
+
+            <div data-role="header" data-theme="b" >
+                <a href="#myPanel" data-role="button" data-icon="bars" data-iconpos="notext" data-theme="b" data-inline="true">Bars</a>
+                <h1>Find my iPhone</h1>
+            </div><!-- header -->
+
+            <div data-role="content" data-theme="b" >
+                <div id="settings">
+                    <label for="text-basic">Geocoding</label>
+                    <input type="text" id="address" value="">
+                    <input type="button" id="geocode" value="Geocode" data-icon="check" data-theme="b" />
+                </div>
+
+            </div><!-- content -->
+        </div><!-- page -->
+
     </body>
 </html>

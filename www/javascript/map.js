@@ -26,11 +26,15 @@ var view={
     curLong: 121.480028,
     curLat: 31.236977,
     bm: '',
+    curMarker: null,
+    curCircle: null,
 
     init: function(){
-        var bm = new BMap.Map("mapview");
+        var bm = new BMap.Map("mapview", {enableHighResolution: true});
         var traffic = new BMap.TrafficLayer();
         bm.centerAndZoom(new BMap.Point(view.curLong, view.curLat), 17);
+        var opts = {type: BMAP_NAVIGATION_CONTROL_ZOOM};    
+        bm.addControl(new BMap.NavigationControl(opts));
         //bm.addControl(new BMap.MapTypeControl());
         //bm.addTileLayer(traffic);
         view.bm=bm;
@@ -44,6 +48,8 @@ var view={
     },
 
     render: function(){
+        view.bm.removeOverlay(view.curMarker);
+        view.bm.removeOverlay(view.curCircle);
         var point = new BMap.Point(view.curLong, view.curLat);
         BMap.Convertor.translate(point,0,view.translate); 
     },
@@ -52,12 +58,11 @@ var view={
         view.bm.setCenter(point);
         var marker = new BMap.Marker(point);
         view.bm.addOverlay(marker);
-        
         /* Add info */
         var fromNow=moment(view.lastUpdate).fromNow();
         var label = new BMap.Label(fromNow,{offset:new BMap.Size(20,-10)});
         label.setStyle({fontSize: '16px', borderRaduis:'5px'});
-        marker.setLabel(label);
+        //marker.setLabel(label);
         marker.addEventListener('click',function(){
             /* Update info */
             this.getLabel().setContent(moment(view.lastUpdate).fromNow());
@@ -69,6 +74,9 @@ var view={
         circle.setStrokeWeight(1);
         view.bm.addOverlay(circle);
 
+        /* Save object ref */
+        view.curMarker=marker;        
+        view.curCircle=circle;        
     },
 };
 
@@ -112,15 +120,8 @@ var settings={
 };
 
 document.addEventListener('DOMContentLoaded', function () {
-    initSVG();
     /* Bind buttons */
-    $('#settings').hide();
-    $('#settingsBtn').click(function(){
-        settings.load();
-        $('#settings').show();
-        $('html, body').animate({scrollTop: $(document).height()-$(window).height()}, 
-                  500,"swing");
-    });
+    settings.load();
     $('#save').click(settings.save);
     $('#refreshBtn').click(updateLocation);
 

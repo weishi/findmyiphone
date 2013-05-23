@@ -1,3 +1,4 @@
+/*
 body{
     margin:0 auto;
     padding: 0px;
@@ -7,51 +8,33 @@ body{
     font-family: helvetica, arial, sans-serif;
     font-size:18px;
 }
-
+*/
 #mapview{
     width: 100%;
-    height: 494px;
-    margin:0;
+    height: 424px;
+    margin: 0;
+    padding: 0;
     display: block;
 }
 
 #footer, #settings{
     width: 100%;
-    height: 50px;
     margin:0;
     display:block;
+    /*
+    height: 50px;
     background:url(../images/linen2.png);
     background-repeat:repeat;
+    */
 }
 
-#footer svg{
-    display:inline-block;
-    border-color:#f5f5f5;
-    border-style:solid;
-    border-width:2px;
-    border-radius:9px;
-    border-color:#def #678 #345 #cde;
-    margin: 5px;
-    padding: 2px;
+.center-wrapper{
+    text-align: center;
 }
-#footer svg path{
-    fill:#f5f5f5 !important;
+.center-wrapper * {
+    margin: 0 auto;
 }
 
-#refreshBtn.loading svg path{
-    fill:#ffff00 !important;
-}
-
-.left{
-    float:left;
-}
-.right{
-    float:right;
-}
-.middle{
-    margin:0 auto;
-    width:200px;
-}
 .bar{
     height: 50px;
 }
@@ -63,49 +46,5 @@ body{
     vertical-align:middle;
     margin:0 auto;
     display:block;
-}
-
-#footer div{
-    display:block;
-}
-
-/* Settings form */
-#settings label {
-    width:100%;
-    height: 32px;
-    display: block;
-    clear:both;
-    margin-top:4px;
-    margin-bottom:4px;
-}
-
-#settings label span {
-    height: 26px;
-    display: block;
-    float:left;
-    width:85px;
-    text-align:right;
-    vertical-align:middle;
-    line-height: 26px;
-}
-
-#settings .input_text {
-    height: 26px;
-    width: 210px;
-    float: right;
-    margin-right: 5px;
-    border-bottom: 1px double #171717;
-    border-top: 1px double #171717;
-    border-left:1px double #333333;
-    border-right:1px double #333333;
-}
-
-#save{
-    float:right; 
-    width:90px;
-    height: 26px;
-    font-size: 18px;
-    margin-right: 5px;
-    
 }
 
