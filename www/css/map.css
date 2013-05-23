@@ -30,6 +30,7 @@ body{
 
 .center-wrapper{
     text-align: center;
+    line-height: 18px;
 }
 .center-wrapper * {
     margin: 0 auto;
