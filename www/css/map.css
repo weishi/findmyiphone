@@ -22,7 +22,6 @@ body{
     margin:0;
     display:block;
     /*
-    height: 50px;
     background:url(../images/linen2.png);
     background-repeat:repeat;
     */
@@ -30,7 +29,8 @@ body{
 
 .center-wrapper{
     text-align: center;
-    line-height: 18px;
+    height: 42px;
+    padding-top: 7px;
 }
 .center-wrapper * {
     margin: 0 auto;

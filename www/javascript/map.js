@@ -100,13 +100,15 @@ var view={
         var marker = new BMap.Marker(point);
         view.bm.addOverlay(marker);
         /* Add info */
-        var fromNow=moment(view.lastUpdate).fromNow();
+        var fromNow=moment(view.lastUpdate).fromNow() + "<br>" + 
+            moment(view.lastUpdate).format('MM/D HH:mm');
         var label = new BMap.Label(fromNow,{offset:new BMap.Size(20,-10)});
-        label.setStyle({fontSize: '16px', borderRaduis:'5px'});
-        //marker.setLabel(label);
+        label.setStyle({fontSize: '12px', borderRadius:'5px', opacity:'0.6'});
+        marker.setLabel(label);
         marker.addEventListener('click',function(){
             /* Update info */
-            this.getLabel().setContent(moment(view.lastUpdate).fromNow());
+            this.getLabel().setContent(moment(view.lastUpdate).fromNow() + "<br>" +
+            moment(view.lastUpdate).format('MM/D HH:mm'));
         });
         /* Add radius */
         var circle= new BMap.Circle(point,view.curAccuracy);
@@ -117,7 +119,7 @@ var view={
 
         /* Save object ref */
         view.curMarker=marker;        
-        view.curCircle=circle;        
+        view.curCircle=circle;
     },
 };
 
@@ -146,7 +148,7 @@ function updateLocation(){
                         locationSource.add(_long,_lat,_acc,_ts);
                     }
                     view.render();
-                    $('#info').html(moment(view.lastUpdate).format('MM/D/YYYY HH:mm:ss'));
+                    $('#locationInfo').html(moment(view.lastUpdate).format('MM/D/YYYY HH:mm:ss'));
                     $('#refreshBtn').removeClass('loading');
                     $.mobile.loading("hide");
                 },
@@ -191,6 +193,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 var historyEntry=$('<li/>',{
                     id: loc.id,
                     text: moment(loc.timestamp).format('MM/D/YYYY HH:mm:ss')
+                });
+                historyEntry.data('longitude',loc.longitude);
+                historyEntry.data('latitude',loc.latitude);
+                historyEntry.data('accuracy',loc.accuracy);
+                historyEntry.data('timestamp',loc.timestamp);
+                historyEntry.on('click',function(event){
+                    $.mobile.changePage( $("#mapPage"), "slide", true, true);
+                    view.update(
+                        $(this).data('longitude'),
+                        $(this).data('latitude'),
+                        $(this).data('accuracy'),
+                        $(this).data('timestamp')
+                        );
+                    view.render();
                 });
                 $('#historyList').append(historyEntry);
             });

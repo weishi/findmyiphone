@@ -26,6 +26,7 @@
         <title>Find my iPhone</title>
     </head>
     <body>
+        <!-- ======================== Map Page ===================== -->
         <div data-role="page" id="mapPage">
             <div data-role="panel" id="myPanel">
                 <ul data-role="listview">
@@ -75,7 +76,7 @@
                     <label for="text-basic">Password:</label>
                     <input type="password" id="password" value="">
                     <input type="button" id="save" value="Save" data-icon="check" data-theme="b" />
-                    
+
                     <label for="trafficFlip">Traffic layer:</label>
                     <select name="trafficFlip" id="trafficFlip" data-role="slider" data-track-theme="b" data-theme="b" data-mini="false">
                         <option value="off">Hide</option>
@@ -107,11 +108,10 @@
             </div><!-- header -->
 
             <div data-role="content" data-theme="b" >
-                <div id="settings">
-                    <label for="text-basic">Geocoding</label>
-                    <input type="text" id="address" value="">
-                    <input type="button" id="geocode" value="Geocode" data-icon="check" data-theme="b" />
-                </div>
+                <span id="locationInfo"></span>
+                <label for="text-basic">Geocoding</label>
+                <input type="text" id="address" value="">
+                <input type="button" id="geocode" value="Geocode" data-icon="check" data-theme="b" />
 
             </div><!-- content -->
         </div><!-- page -->
