@@ -22,7 +22,27 @@ var locationSource={
         });
     },
 
-    /* locationi from DB */
+    getHistory: function(password, success, failure){
+        $.ajax({
+            dataType: 'json',
+        url: locationSource.url,
+        type: 'GET',
+        data: {
+            p: password,
+        readHistory: 'true'
+        },
+        success: function(data){
+            console.log(data);
+            success(data);
+        },
+        error: function(xhr, status){
+            console.log(status);
+            failure(status);
+        }
+        });
+    },
+
+    /* location from DB */
     init: function(){
         persistence.store.websql.config(persistence, 'fmiDB', 'Location history', 128 * 1024);
         Loc=persistence.define('loc',{
@@ -31,7 +51,15 @@ var locationSource={
             accuracy: "TEXT",
             timestamp: "INT"
         });
+        Loc.index('timestamp',{unique:true});
         persistence.schemaSync();
+    },
+
+    clear: function(){
+        Loc.all().destroyAll();
+        persistence.flush(function() {
+            console.log('Done destorying');
+        });
     },
 
     add: function(lg,lt,acc,ts){
@@ -40,9 +68,13 @@ var locationSource={
         newLoc.latitude=lt.toString();
         newLoc.accuracy=acc.toString();
         newLoc.timestamp=ts;
-        persistence.add(newLoc);
-        persistence.flush(function() {
-            console.log('Done flushing');
+        Loc.all().filter('timestamp','=',ts).count(function(result){
+            if(result==0){
+                persistence.add(newLoc);
+                persistence.flush(function() {
+                    console.log('Done inserting');
+                });
+            }
         });
     },
 
@@ -70,7 +102,7 @@ var view={
         view.bm=bm;
         view.traffic = new BMap.TrafficLayer();
     },
-    
+
     toggleTraffic: function(){
         if(view.enabledTraffic){
             view.bm.removeTileLayer(view.traffic);
@@ -108,7 +140,7 @@ var view={
         marker.addEventListener('click',function(){
             /* Update info */
             this.getLabel().setContent(moment(view.lastUpdate).fromNow() + "<br>" +
-            moment(view.lastUpdate).format('MM/D HH:mm'));
+                moment(view.lastUpdate).format('MM/D HH:mm'));
         });
         /* Add radius */
         var circle= new BMap.Circle(point,view.curAccuracy);
@@ -123,8 +155,44 @@ var view={
     },
 };
 
+
+function loadHistory(){
+    $.mobile.loading( "show", {
+        text: "",
+        textVisible: false,
+        theme: "b",
+        textonly: false,
+        html: ""
+    });
+    if(typeof localStorage["username"] !== 'undefined'){
+        locationSource.getHistory(
+                localStorage["password"],
+                function(historyPoints){
+                    for(var j=0;j<historyPoints.length;j++){
+                        data=historyPoints[j];
+                        for(var i=0;i<data.length;i++){
+                            var device=data[i];
+                            console.log(device['name']);
+                            var _long=device['location']['longitude'];
+                            var _lat=device['location']['latitude'];
+                            var _acc=device['location']['horizontalAccuracy'];
+                            var _ts=device['location']['timeStamp'];
+                            locationSource.add(_long,_lat,_acc,_ts);
+                        }
+                    }
+                    $.mobile.loading("hide");
+                    //Reload history
+                    $.mobile.changePage($("#historyPage"), 
+                        {reloadPage: true, allowSamePageTransition: true});
+                },
+                function(xhr, status){
+                    //failure
+                }
+        );
+    }
+};
+
 function updateLocation(){
-    $('#refreshBtn').addClass('loading');
     $.mobile.loading( "show", {
         text: "",
         textVisible: false,
@@ -174,16 +242,20 @@ var settings={
 
 
 document.addEventListener('DOMContentLoaded', function () {
-    /* Bind buttons */
     settings.load();
-    $('#save').click(settings.save);
-    $('#refreshBtn').click(updateLocation);
-
-    $('#trafficFlip').val('off');
-    $('#trafficFlip').change(view.toggleTraffic);
-
     locationSource.init();
     view.init();
+    /* Bind buttons */
+    //mapPage
+    $('#refreshBtn').click(updateLocation);
+    //setttingsPage
+    $('#save').click(settings.save);
+    $('#clearHistory').click(locationSource.clear);
+    $('#trafficFlip').val('off');
+    $('#trafficFlip').change(view.toggleTraffic);
+    //historyPage
+    $('#loadHistory').click(loadHistory);
+
     /* Populate history */
     $('#historyPage').on('pagebeforeshow',function(){
         /* Load history */

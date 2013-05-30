@@ -82,6 +82,8 @@
                         <option value="off">Hide</option>
                         <option value="on">Show</option>
                     </select>
+                    
+                    <input type="button" id="clearHistory" value="Clear history" data-icon="delete" data-theme="b" />
                 </div>
 
                 <form id="position">
@@ -133,7 +135,8 @@
             </div><!-- header -->
 
             <div data-role="content" data-theme="b" >
-                <ul data-role="listview" id="historyList">
+                <a id="loadHistory" data-role="button" data-icon="refresh" data-theme="b">Load history</a>
+                <ul data-role="listview" id="historyList" data-inset="true" >
                 </ul>
             </div><!-- content -->
         </div><!-- page -->
