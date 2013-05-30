@@ -1,14 +1,3 @@
-/*
-body{
-    margin:0 auto;
-    padding: 0px;
-    background:url(../images/linen2.png);
-    background-repeat:repeat;
-    width: 320px;
-    font-family: helvetica, arial, sans-serif;
-    font-size:18px;
-}
-*/
 #mapview{
     width: 100%;
     height: 424px;
@@ -17,35 +6,14 @@ body{
     display: block;
 }
 
-#footer, #settings{
-    width: 100%;
-    margin:0;
-    display:block;
-    /*
-    background:url(../images/linen2.png);
-    background-repeat:repeat;
-    */
-}
-
 .center-wrapper{
     text-align: center;
     height: 42px;
     padding-top: 7px;
 }
+
 .center-wrapper * {
     margin: 0 auto;
 }
 
-.bar{
-    height: 50px;
-}
-#info{
-    width: 100%;
-    height: 100%;
-    line-height: 50px;
-    text-align: center;
-    vertical-align:middle;
-    margin:0 auto;
-    display:block;
-}
 
