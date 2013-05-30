@@ -10,6 +10,7 @@ var locationSource={
         data: {
             u: username,
         p: password,
+        action: 'getLocation'
         },
         success: function(data){
             console.log(data);
@@ -29,7 +30,7 @@ var locationSource={
         type: 'GET',
         data: {
             p: password,
-        readHistory: 'true'
+        action: 'getHistory'
         },
         success: function(data){
             console.log(data);
@@ -39,6 +40,15 @@ var locationSource={
             console.log(status);
             failure(status);
         }
+        });
+    },
+
+    clearRemoteHistory: function(){
+        $.ajax({
+            dataType: 'json',
+            url: locationSource.url,
+            type: 'GET',
+            data: { action: 'clearHistory'}
         });
     },
 
@@ -55,7 +65,7 @@ var locationSource={
         persistence.schemaSync();
     },
 
-    clear: function(){
+    clearLocalHistory: function(){
         Loc.all().destroyAll();
         persistence.flush(function() {
             console.log('Done destorying');
@@ -240,6 +250,24 @@ var settings={
     }
 };
 
+function deg2rad(deg) {
+    return deg * (Math.PI/180)
+} 
+
+function gpsDistance(p1,p2){
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(p2.latitude-p1.latitude);
+    var dLon = deg2rad(p2.longitude-p1.longitude); 
+    var a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(deg2rad(p1.latitude)) * Math.cos(deg2rad(p2.latitude)) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2)
+        ; 
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    var d = R * c * 1000; // Distance in m
+    return d;
+}
+
 
 document.addEventListener('DOMContentLoaded', function () {
     settings.load();
@@ -250,7 +278,8 @@ document.addEventListener('DOMContentLoaded', function () {
     $('#refreshBtn').click(updateLocation);
     //setttingsPage
     $('#save').click(settings.save);
-    $('#clearHistory').click(locationSource.clear);
+    $('#clearLocalHistory').click(locationSource.clearLocalHistory);
+    $('#clearRemoteHistory').click(locationSource.clearRemoteHistory);
     $('#trafficFlip').val('off');
     $('#trafficFlip').change(view.toggleTraffic);
     //historyPage
@@ -260,11 +289,30 @@ document.addEventListener('DOMContentLoaded', function () {
     $('#historyPage').on('pagebeforeshow',function(){
         /* Load history */
         $('#historyList').empty();
-        locationSource.getAll(function(locs){
+        locationSource.getAll(function(locArray){
+            /* compute distance */
+            locs=[];
+            for(var i=locArray.length-1;i>=0;i--){
+                locObj=new Object();
+                locObj.longitude=locArray[i].longitude;
+                locObj.latitude=locArray[i].latitude;
+                locObj.accuracy=locArray[i].accuracy;
+                locObj.timestamp=locArray[i].timestamp;
+                if(i==locArray.length-1){
+                    locObj.distance=0;
+                }else{
+                    locObj.distance=Math.round(gpsDistance(locArray[i],locArray[i+1]));
+                }
+                locs.push(locObj);
+            }
+            locs.reverse();
+
+            /* build li entry*/
             locs.forEach(function(loc){
                 var historyEntry=$('<li/>',{
                     id: loc.id,
                     text: moment(loc.timestamp).format('MM/D/YYYY HH:mm:ss')
+                    + ' | '+ loc.distance +'m'
                 });
                 historyEntry.data('longitude',loc.longitude);
                 historyEntry.data('latitude',loc.latitude);

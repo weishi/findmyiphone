@@ -16,29 +16,30 @@ try:
     credentials=cgi.FieldStorage()
     username=credentials.getvalue('u')
     password=credentials.getvalue('p')
-    readHistory=credentials.getvalue('readHistory');
+    action=credentials.getvalue('action');
     
     enc=encoder(password)
     db=anydbm.open("./loc.db","c")
     result=[]
 
-    #Send history location only
-    if readHistory == "true":
+    if action == "getHistory":
         for k, v in db.iteritems():
             entry=enc.decode(v)
             if( "timeStamp" in entry ):
                 result.append(json.loads(entry))
-    else:
+    if action == "clearHistory":
+        for k in db.keys():
+            del db[k]
+    if action == "getLocation":
         #Check new location
         fmi=findMyiPhone(username, password)
         fmi.login()
         result=fmi.getLocation()
-
         #store location to local DB
         for device in result:
             if device['location']:
                 timestamp=device['location']['timeStamp']
-                db[str(timestamp)]=enc.encode(json.dumps(result));
+                db[str(timestamp)]=enc.encode(json.dumps(result))
 
     db.close();
     print json.dumps(result)
