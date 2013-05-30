@@ -25,7 +25,6 @@ javascript/map.js
 javascript/convertor.js
 javascript/jquery-1.9.1.js
 javascript/jquery.mobile-1.3.1.js
-javascript/less-1.3.3.min.js
 javascript/moment.min.js
 javascript/persistence/persistence.js
 javascript/persistence/persistence.store.sql.js
