@@ -46,9 +46,9 @@ var locationSource={
     clearRemoteHistory: function(){
         $.ajax({
             dataType: 'json',
-            url: locationSource.url,
-            type: 'GET',
-            data: { action: 'clearHistory'}
+        url: locationSource.url,
+        type: 'GET',
+        data: { action: 'clearHistory'}
         });
     },
 
@@ -303,13 +303,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 }else{
                     locObj.distance=Math.round(gpsDistance(locArray[i],locArray[i+1]));
                 }
-                locs.push(locObj);
+                if(locObj.distance>$('#distFilter').val()){
+                    locs.push(locObj);
+                }
             }
             locs.reverse();
 
             /* build li entry*/
             locs.forEach(function(loc){
-                var historyEntry=$('<li/>',{
+                var historyLi=$('<li/>');
+                var historyEntry=$('<a/>',{
                     id: loc.id,
                     text: moment(loc.timestamp).format('MM/D/YYYY HH:mm:ss')
                     + ' | '+ loc.distance +'m'
@@ -318,6 +321,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 historyEntry.data('latitude',loc.latitude);
                 historyEntry.data('accuracy',loc.accuracy);
                 historyEntry.data('timestamp',loc.timestamp);
+                historyEntry.data('dateStr',moment(loc.timestamp).format('dddd, MMMM Do YYYY'));
                 historyEntry.on('click',function(event){
                     $.mobile.changePage( $("#mapPage"), "slide", true, true);
                     view.update(
@@ -328,9 +332,19 @@ document.addEventListener('DOMContentLoaded', function () {
                         );
                     view.render();
                 });
-                $('#historyList').append(historyEntry);
+                historyLi.append(historyEntry);
+                $('#historyList').append(historyLi);
             });
             $('#historyList').listview('refresh');
         });
+        /* List divider */
+        $('#historyList').listview({
+            autodividers: true,
+            autodividersSelector: function(li){
+                var divider=$(li).find('a').data('dateStr');
+                return divider;
+            }
+        });
     });
+
 });

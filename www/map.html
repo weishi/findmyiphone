@@ -46,7 +46,9 @@
 
             <div data-role="footer" data-theme="b">
                 <div class="center-wrapper">
+                    <a id="leftBtn" data-role="button" data-icon="arrow-l" data-theme="b" data-inline="true">Prev</a>
                     <a id="refreshBtn" data-role="button" data-icon="refresh" data-theme="b" data-inline="true">Locate</a>
+                    <a id="rightBtn" data-role="button" data-icon="arrow-r" data-theme="b" data-inline="true">Next</a>
                 </div>
             </div><!-- footer -->
         </div><!-- page -->
@@ -83,6 +85,9 @@
                     
                     <input type="button" id="clearLocalHistory" value="Clear local history" data-icon="delete" data-theme="b" />
                     <input type="button" id="clearRemoteHistory" value="Clear remote history" data-icon="delete" data-theme="b" />
+                    
+                    <label for="slider-2">Distance filter:</label>
+                    <input type="range" id="distFilter" data-highlight="true" min="0" max="1000" step="50" value="0"/>
                 </div>
 
                 <form id="position">
@@ -135,7 +140,7 @@
 
             <div data-role="content" data-theme="b" >
                 <a id="loadHistory" data-role="button" data-icon="refresh" data-theme="b">Load history</a>
-                <ul data-role="listview" id="historyList" data-inset="true" >
+                <ul data-role="listview" id="historyList" data-inset="true" data-autodividers="true" data-divider-theme="c">
                 </ul>
             </div><!-- content -->
         </div><!-- page -->
