@@ -227,6 +227,7 @@ function updateLocation(){
                     }
                     view.render();
                     $('#locationInfo').html(moment(view.lastUpdate).format('MM/D/YYYY HH:mm:ss'));
+                    $('#locationInfo').data('isHistory',false);
                     $('#refreshBtn').removeClass('loading');
                     $.mobile.loading("hide");
                 },
@@ -234,6 +235,26 @@ function updateLocation(){
                     $('#info').html(status);
                 }
         );
+    }
+};
+
+function lastLocation(){
+    if($('#locationInfo').data('isHistory')){
+        var targetIndex=$('#locationInfo').data('index')+1;
+        var hList=$('#historyList').find('a');
+        if(0<= targetIndex && targetIndex-1 < hList.length){
+            $(hList[targetIndex]).trigger('click');
+        }
+    }
+};
+
+function nextLocation(){
+    if($('#locationInfo').data('isHistory')){
+        var targetIndex=$('#locationInfo').data('index')-1;
+        var hList=$('#historyList').find('a');
+        if(0<= targetIndex && targetIndex-1 < hList.length){
+            $(hList[targetIndex]).trigger('click');
+        }
     }
 };
 
@@ -268,6 +289,70 @@ function gpsDistance(p1,p2){
     return d;
 }
 
+function historyListFiller(){
+    /* Load history */
+    $('#historyList').empty();
+    locationSource.getAll(function(locArray){
+        /* compute distance */
+        locs=[];
+        for(var i=locArray.length-1;i>=0;i--){
+            locObj=new Object();
+            locObj.longitude=locArray[i].longitude;
+            locObj.latitude=locArray[i].latitude;
+            locObj.accuracy=locArray[i].accuracy;
+            locObj.timestamp=locArray[i].timestamp;
+            if(i==locArray.length-1){
+                locObj.distance=0;
+            }else{
+                locObj.distance=Math.round(gpsDistance(locArray[i],locArray[i+1]));
+            }
+            if(locObj.distance>$('#distFilter').val()){
+                locs.push(locObj);
+            }
+        }
+        locs.reverse();
+
+        /* build li entry*/
+        for(index=0;index<locs.length;index++){
+            var loc=locs[index];
+            var historyLi=$('<li/>');
+            var historyEntry=$('<a/>',{
+                id: loc.id,
+                text: moment(loc.timestamp).format('MM/D/YYYY HH:mm:ss')
+                + ' | '+ loc.distance +'m'
+            });
+            historyEntry.data('index',index);
+            historyEntry.data('longitude',loc.longitude);
+            historyEntry.data('latitude',loc.latitude);
+            historyEntry.data('accuracy',loc.accuracy);
+            historyEntry.data('timestamp',loc.timestamp);
+            historyEntry.data('dateStr',moment(loc.timestamp).format('dddd, MMMM Do YYYY'));
+            historyEntry.on('click',function(event){
+                $('#locationInfo').data('index',$(this).data('index'));
+                $('#locationInfo').data('isHistory',true);
+                $.mobile.changePage( $("#mapPage"), "slide", true, true);
+                view.update(
+                    $(this).data('longitude'),
+                    $(this).data('latitude'),
+                    $(this).data('accuracy'),
+                    $(this).data('timestamp')
+                    );
+                view.render();
+            });
+            historyLi.append(historyEntry);
+            $('#historyList').append(historyLi);
+        }
+        /* List divider */
+        $('#historyList').listview({
+            autodividers: true,
+            autodividersSelector: function(li){
+                var divider=$(li).find('a').data('dateStr');
+                return divider;
+            }
+        });
+        $('#historyList').listview('refresh');
+    });
+}
 
 document.addEventListener('DOMContentLoaded', function () {
     settings.load();
@@ -276,6 +361,8 @@ document.addEventListener('DOMContentLoaded', function () {
     /* Bind buttons */
     //mapPage
     $('#refreshBtn').click(updateLocation);
+    $('#leftBtn').click(lastLocation);
+    $('#rightBtn').click(nextLocation);
     //setttingsPage
     $('#save').click(settings.save);
     $('#clearLocalHistory').click(locationSource.clearLocalHistory);
@@ -286,65 +373,8 @@ document.addEventListener('DOMContentLoaded', function () {
     $('#loadHistory').click(loadHistory);
 
     /* Populate history */
-    $('#historyPage').on('pagebeforeshow',function(){
-        /* Load history */
-        $('#historyList').empty();
-        locationSource.getAll(function(locArray){
-            /* compute distance */
-            locs=[];
-            for(var i=locArray.length-1;i>=0;i--){
-                locObj=new Object();
-                locObj.longitude=locArray[i].longitude;
-                locObj.latitude=locArray[i].latitude;
-                locObj.accuracy=locArray[i].accuracy;
-                locObj.timestamp=locArray[i].timestamp;
-                if(i==locArray.length-1){
-                    locObj.distance=0;
-                }else{
-                    locObj.distance=Math.round(gpsDistance(locArray[i],locArray[i+1]));
-                }
-                if(locObj.distance>$('#distFilter').val()){
-                    locs.push(locObj);
-                }
-            }
-            locs.reverse();
+    $('#historyPage').on('pagebeforeshow', historyListFiller);
 
-            /* build li entry*/
-            locs.forEach(function(loc){
-                var historyLi=$('<li/>');
-                var historyEntry=$('<a/>',{
-                    id: loc.id,
-                    text: moment(loc.timestamp).format('MM/D/YYYY HH:mm:ss')
-                    + ' | '+ loc.distance +'m'
-                });
-                historyEntry.data('longitude',loc.longitude);
-                historyEntry.data('latitude',loc.latitude);
-                historyEntry.data('accuracy',loc.accuracy);
-                historyEntry.data('timestamp',loc.timestamp);
-                historyEntry.data('dateStr',moment(loc.timestamp).format('dddd, MMMM Do YYYY'));
-                historyEntry.on('click',function(event){
-                    $.mobile.changePage( $("#mapPage"), "slide", true, true);
-                    view.update(
-                        $(this).data('longitude'),
-                        $(this).data('latitude'),
-                        $(this).data('accuracy'),
-                        $(this).data('timestamp')
-                        );
-                    view.render();
-                });
-                historyLi.append(historyEntry);
-                $('#historyList').append(historyLi);
-            });
-            $('#historyList').listview('refresh');
-        });
-        /* List divider */
-        $('#historyList').listview({
-            autodividers: true,
-            autodividersSelector: function(li){
-                var divider=$(li).find('a').data('dateStr');
-                return divider;
-            }
-        });
-    });
-
+    /* init states */
+    $('#locationInfo').data('isHistory',false);
 });
