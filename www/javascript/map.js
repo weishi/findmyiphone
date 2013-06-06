@@ -228,7 +228,6 @@ function updateLocation(){
                     view.render();
                     $('#locationInfo').html(moment(view.lastUpdate).format('MM/D/YYYY HH:mm:ss'));
                     $('#locationInfo').data('isHistory',false);
-                    $('#refreshBtn').removeClass('loading');
                     $.mobile.loading("hide");
                 },
                 function(xhr, status){
@@ -295,6 +294,7 @@ function historyListFiller(){
     locationSource.getAll(function(locArray){
         /* compute distance */
         locs=[];
+        console.log(locArray.length);
         for(var i=locArray.length-1;i>=0;i--){
             locObj=new Object();
             locObj.longitude=locArray[i].longitude;
@@ -306,7 +306,7 @@ function historyListFiller(){
             }else{
                 locObj.distance=Math.round(gpsDistance(locArray[i],locArray[i+1]));
             }
-            if(locObj.distance>$('#distFilter').val()){
+            if(locObj.distance >= $('#distFilter').val()){
                 locs.push(locObj);
             }
         }
