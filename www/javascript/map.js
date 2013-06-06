@@ -1,6 +1,6 @@
 var locationSource={
     Loc: null,
-    url: 'http://www.stanford.edu/~weishi/cgi-bin/locate.py',
+    url: '/locate',
 
     get: function(username, password, success, failure){
         $.ajax({
@@ -266,7 +266,6 @@ var settings={
     save: function(){
         localStorage["username"]=$('#username').val();
         localStorage["password"]=$('#password').val();
-        $('#settings').hide();
     }
 };
 
